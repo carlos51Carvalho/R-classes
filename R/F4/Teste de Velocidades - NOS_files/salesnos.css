@@ -1,0 +1,59 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "salesnos";
+  src:
+    url("./salesnos.woff2?") format("woff2"),
+    url("./salesnos.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[data-icon]:before {
+  font-family: "salesnos" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="salesnos-"]:before,
+[class*=" salesnos-"]:before {
+  font-family: "salesnos" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.salesnos-up-arrow:before {
+  content: "\61";
+}
+.salesnos-right-arrow:before {
+  content: "\62";
+}
+.salesnos-down-arrow:before {
+  content: "\63";
+}
+.salesnos-laptop:before {
+  content: "\65";
+}
+.salesnos-left-arrow:before {
+  content: "\64";
+}
+.salesnos-tablet:before {
+  content: "\66";
+}
+.salesnos-dvd:before {
+  content: "\67";
+}

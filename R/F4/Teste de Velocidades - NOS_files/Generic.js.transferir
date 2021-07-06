@@ -1,0 +1,283 @@
+window.BysideGeneric = window.BysideGeneric || {};
+BysideGeneric.Utils = BysideGeneric.Utils || {};
+BysideGeneric.Utils.global = BysideGeneric.Utils.global || {};
+BysideGeneric.Utils.animate = BysideGeneric.Utils.animate || {};
+BysideGeneric.Utils.global = {
+
+    // Validar PL
+    isvalid_pl_phonenumber: function(phone) {
+        var res = phone.substring(0, 2);
+        if (res == '48' && phone.length > 9) {
+            phone = phone.substring(2, phone.length);
+        }
+        if (phone.length != 9) {
+            return false;
+        }
+        var filter = /^(?:1[2-8]|2[2-69]|3[2-49]|4[1-68]|5[0-9]|6[0-35-9]|[7-8][1-9]|9[145])[0-9]{7}/;
+        if (filter.test(phone)) {
+            return true;
+        }
+        return false;
+    },
+
+    // Validar ID
+    isvalid_id_phonenumber: function(phone) {
+        var res = phone.substring(0, 2);
+        var res_fixo = phone.substring(0, 1);
+        if (res == '62' && phone.length > 9) {
+            phone = phone.substring(2, phone.length);
+        }
+        if (res_fixo == '0' && phone.length > 9) {
+            phone = phone.substring(1, phone.length);
+        }
+        if (phone.length < 9 || phone.length > 11) {
+            return false;
+        }
+        var filter = /^[0-9]{9,11}$/;
+        if (filter.test(phone)) {
+            return true;
+        }
+        return false;
+    },
+
+    // Validar PT
+    isvalid_pt_phonenumber: function(phone) {
+        var res = phone.substring(0, 3);
+        if (res == '351' && phone.length > 9) {
+            phone = phone.substring(3, phone.length);
+        }
+        if (phone.length != 9) {
+            return false;
+        }
+        var filter = /^9[1236][0-9]{7}$|^2[3][1-6|8-9][0-9]{6}$|^2[4][1-5|9][0-9]{6}$|^2[5][1-6|8-9][0-9]{6}$|^2[6][1-3|5-6|8-9][0-9]{6}$|^2[7][1-9][0-9]{6}$|^2[8][1-6|9][0-9]{6}$|^2[9][1-2|5-6][0-9]{6}$|^2[12][0-9]{7}$|^3[0][0-9]{7}$/;
+        if (filter.test(phone)) {
+            return true;
+        }
+        return false;
+    },
+
+    // Validar ES
+    isvalid_es_phonenumber: function(phone) {
+        var res = phone.substring(0, 2);
+        if (res == '34' && phone.length > 9) {
+            phone = phone.substring(2, phone.length);
+        }
+        if (phone.length != 9) {
+            return false;
+        }
+        var filter = /^[6|7][0-9]{8}|^8[1-9][0-9]{7}$|^9[1-9][0-9]{7}$/;
+        if (filter.test(phone)) {
+            return true;
+        }
+        return false;
+    },
+
+    // Validar Br
+    isvalid_br_phonenumber: function(phone) {
+        var res = phone.substring(0, 2);
+        var ddd;
+        var arrPrefixos = [ '11','12','13','14','15','16','17','18','19','21','22','24','27','28','31','32','33','34','35','37','38','41','42','43','44','45','46','47','48','49','51','53','54','55','61','62','63','64','65','66','67','68','69','71','73','74','75','77','79','81','82','83','84','85','86','87','88','89','91','92','93','94','95','96','97','98','99'];
+        if (res == '55' && phone.length >= 12) {
+            phone = phone.substring(2, phone.length);
+        }
+        if (phone.length < 8) {
+            return false;
+        }
+        var ddd = phone.substring(0, 2);
+        var filter = /^([1-9]{2})(?:[2-8]|9[1-9])[0-9]{3}[0-9]{4}$/;
+        if (filter.test(phone)) {
+            if(arrPrefixos.indexOf(ddd) == -1) return false; // Número precisa pertencer a algum prefixo (DDD ou DDI)
+            return true;
+        }
+        return false;
+    },
+
+    // Validar DDD Brasil
+    isvalid_br_dddpnumber: function(ddd) {
+        var arrPrefixos = [ '11','12','13','14','15','16','17','18','19','21','22','24','27','28','31','32','33','34','35','37','38','41','42','43','44','45','46','47','48','49','51','53','54','55','61','62','63','64','65','66','67','68','69','71','73','74','75','77','79','81','82','83','84','85','86','87','88','89','91','92','93','94','95','96','97','98','99'];
+
+        if(ddd.length < 2 || ddd.length > 2){return false;}
+        if(arrPrefixos.indexOf(ddd) == -1){return false;}
+        return true;
+    },
+
+    // validar Contribuinte PT
+    isvalid_pt_nif: function(nifPt) {
+        var contribuinte = nifPt;
+        if (nifPt.length != 9) {
+            return false;
+        }
+        var temErro=0;
+        if (
+            contribuinte.substr(0,1) !== '1' && // pessoa singular
+            contribuinte.substr(0,1) !== '2' && // pessoa singular
+            contribuinte.substr(0,1) !== '3' && // pessoa singular
+            contribuinte.substr(0,2) !== '45' && // pessoa singular não residente
+            contribuinte.substr(0,1) !== '5' && // pessoa colectiva
+            contribuinte.substr(0,1) !== '6' && // administração pública
+            contribuinte.substr(0,2) !== '70' && // herança indivisa
+            contribuinte.substr(0,2) !== '71' && // pessoa colectiva não residente
+            contribuinte.substr(0,2) !== '72' && // fundos de investimento
+            contribuinte.substr(0,2) !== '77' && // atribuição oficiosa
+            contribuinte.substr(0,2) !== '79' && // regime excepcional
+            contribuinte.substr(0,1) !== '8' && // empresário em nome individual (extinto)
+            contribuinte.substr(0,2) !== '90' && // condominios e sociedades irregulares
+            contribuinte.substr(0,2) !== '91' && // condominios e sociedades irregulares
+            contribuinte.substr(0,2) !== '98' && // não residentes
+            contribuinte.substr(0,2) !== '99' // sociedades civis
+        ) { temErro=1; }
+        var check1 = contribuinte.substr(0,1)*9;
+        var check2 = contribuinte.substr(1,1)*8;
+        var check3 = contribuinte.substr(2,1)*7;
+        var check4 = contribuinte.substr(3,1)*6;
+        var check5 = contribuinte.substr(4,1)*5;
+        var check6 = contribuinte.substr(5,1)*4;
+        var check7 = contribuinte.substr(6,1)*3;
+        var check8 = contribuinte.substr(7,1)*2;
+        var total= check1 + check2 + check3 + check4 + check5 + check6 + check7 + check8;
+        var divisao= total / 11;
+        var modulo11=total - parseInt(divisao)*11;
+        var comparador = 0;
+        if ( modulo11===1 || modulo11===0 ){ comparador=0; } else { comparador = 11-modulo11; }
+        var ultimoDigito=contribuinte.substr(8,1)*1;
+        if ( ultimoDigito !== comparador ){
+            temErro=1;
+        }
+        if (temErro===1){
+            return false;
+        }
+        return true;
+    },
+
+    // Validar Email
+    isvalid_email: function(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    },
+
+    // Validar o NIF e NIE
+    isvalid_es_dni: function(dnies) {
+      var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+      var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+      var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+      var str = dnies.toString().toUpperCase();
+
+      if (!nifRexp.test(str) && !nieRexp.test(str)) return false;
+
+      var nie = str
+        .replace(/^[X]/, '0')
+        .replace(/^[Y]/, '1')
+        .replace(/^[Z]/, '2');
+
+      var letter = str.substr(-1);
+      var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+      if (validChars.charAt(charIndex) === letter) return true;
+
+      return false;
+    },
+
+    // Validar CP
+    isvalid_pt_cp: function(codepostal) {
+        return /^\d{4}-\d{3}?$/.test(codepostal);
+    },
+
+    // Validar CheckBox
+    isvalid_checkbox: function(bbo_CheckBox) {
+        if(bbo_CheckBox.checked) {
+            return true;
+        }
+        return false;
+    },
+
+
+    // Método para validar os radios
+    isvalid_checkradio: function(bbo_checkRadio) {
+        var radioObj = bbo_checkRadio;
+        for(var i=0; i<radioObj.length; i++) {
+            if(radioObj[i].checked) {
+                radioObj[i].value;
+                return true;
+            }
+        }
+        return false;
+    },
+
+
+    // Validar CPF Brasil
+    isvalid_br_cpf: function(cpf) {
+        var digitos_iguais = false;
+        var numCpf = cpf.replace(/\D+/g, '');
+        if(numCpf.length > 11 ||
+            numCpf == "00000000000" ||
+            numCpf == "11111111111" ||
+            numCpf == "22222222222" ||
+            numCpf == "33333333333" ||
+            numCpf == "44444444444" ||
+            numCpf == "55555555555" ||
+            numCpf == "66666666666" ||
+            numCpf == "77777777777" ||
+            numCpf == "88888888888" ||
+            numCpf == "99999999999") return false;
+
+        var i, j, s, r;
+
+        for (i = 0; i < 2; i++) {
+            s = 0;
+            for (j = 0; j <= 9 + i; j++)
+                s += window.parseInt(numCpf.substring(j - 1, j) || 0) * (11 + i - j);
+            r = (s * 10) % 11;
+            r = (r === 10) || (r === 11) ? 0 : r;
+            if (r !== window.parseInt(numCpf.substring(9 + i, 10 + i)))
+                return false;
+        }
+
+        return true;
+    },
+
+    // Limita os numeros ao input do telefone
+    isvalid_numerico : function(evt){
+        evt = (evt) ? evt : event;
+        var charCode = (evt.charCode) ? evt.charCode : ((evt.keyCode) ? evt.keyCode : ((evt.which) ? evt.which : 0));
+        if (charCode > 32 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) || (charCode === 8) || (charCode === 9)) {
+            return true;
+        }
+        return false;
+    },
+
+
+};
+
+BysideGeneric.Utils.animate = {
+    // animação fade out
+    bwc_fadeOut : function(el){
+        el.style.opacity = 1;
+        (function fade() {
+            if ((el.style.opacity -= .1) < 0) {
+              el.style.display = "none";
+            } else {
+              setTimeout(fade, 40);
+            }
+      })();
+    },
+
+    // animação fade in
+    bwc_fadeIn : function(el){
+        el.style.opacity = 0;
+        el.style.display = "block";
+        (function fade() {
+            var val = parseFloat(el.style.opacity);
+            if (!((val += .1) > 1)) {
+                el.style.opacity = val;
+                setTimeout(fade, 40);
+            }
+        })();
+    },
+};
+
+var wbBySideCustomTimer = setInterval(function () {
+    if (typeof window.Byside !== 'undefined') {
+        Byside.Utils.global = BysideGeneric.Utils.global;
+        Byside.Utils.animate = BysideGeneric.Utils.animate;
+        clearInterval(wbBySideCustomTimer);
+    }
+}, 50);

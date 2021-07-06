@@ -1,0 +1,91 @@
+﻿var salesUtil = {
+
+    refSeparator: "_",
+
+    addEquipment: function (productId, campaign, stayInPage) {
+        try {
+          
+            $.ajax({
+                url: NOSConstants.GetServicosURL() + '/api/EcommerceServices/AddRelatedEquipmentToBasket/'
+                    + productId + '/' + campaign,
+                method: "POST",
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: "true",
+                xhrFields: { withCredentials: true },
+            })
+                .done(function (response, textStatus, jqXHR) {
+                    if (response.Success && !stayInPage) {
+                        window.location = response.Message;
+                    }
+                    else if (!response.Success) {
+                        console.log("could not add equipment");
+                    }
+                })
+                .fail(function () {
+                    console.log("error");
+                }); 
+
+        }
+        catch (ex) {
+            console.log(ex);
+        }
+    },
+
+    addPackage: function (packageId, mobileTariffs, mobileNetTariffs, ua, price, stayInPage) {
+        try {
+            var r = new Object();
+            r.requestAddPackage = new Object();
+            r.requestAddPackage.PackageId = packageId;
+            r.requestAddPackage.Address = ua;
+            r.requestAddPackage.Userid = !user.isAnonymous ? user.id : null;
+            r.requestAddPackage.NetMobileTariff = mobileNetTariffs;
+            r.requestAddPackage.NVoiceMobiles = 0;
+            //r.requestAddPackage.Force = $scope.SelectedPackage !== null && $scope.SelectedPackage.requestAddPackage.Force;
+            //r.requestAddPackage.Upgrade = $scope.Address.Active;
+            //r.requestAddPackage.ClientAccount = $scope.Account;
+            r.requestAddPackage.Price = price;
+            r.requestAddPackage.Mobiles = [];
+            if (mobileTariffs !== undefined && mobileTariffs !== null && mobileTariffs !== '') {
+                
+                var mobiles = mobileTariffs.split(this.refSeparator);
+                mobiles.forEach(mobile => {
+                    var mobileObject = {};
+                    mobileObject.Tariff = mobile;
+                    r.requestAddPackage.Mobiles.push(mobileObject);
+                    r.requestAddPackage.NVoiceMobiles++;
+                });
+            }
+
+            const selectedPackage = JSON.stringify(r.requestAddPackage);
+            $.ajax({
+                url: NOSConstants.GetServicosURL() + '/api/EcommerceServices/AddPackageBasket',
+                method: "POST",
+                cache: false,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: selectedPackage,
+                xhrFields: { withCredentials: true },
+            })
+            .done(function (response, textStatus, jqXHR) {
+                if (response.Success && !stayInPage) {
+                    window.location = response.Message;
+                }
+                else if (!response.Success) {
+                    console.log("could not add package");
+                }
+            })
+            .fail(function () {
+                console.log("error");
+            }); 
+            
+        
+            
+        }
+        catch (ex) {
+            console.log(ex);
+        }
+    }
+
+};

@@ -1,0 +1,291 @@
+var user = { name: "", id: "", isAnonymous: true };
+
+var loginInfo = {
+    SetDataToPage: function (loginElem, name) {
+        try {
+            loginElem.html(name + '<i class="icon2-arrow-down arrow-icon"></i>');
+            $('.dropdown').dropdown();
+            $(".modal-user-name").html(name);
+            $(".user-image-default").addClass("hidden");
+            $("[name='linkLogin']").addClass("hidden");
+            $("[data-selfcare]").removeClass("hidden");
+            $("[data-user-image]").attr("src", urlImage);
+            $(".menu-container").find('.buttons').addClass('header--logged');
+            $(".profile-nav").removeClass("hidden");
+            $(".user-image-container").removeClass("hidden");
+            $(".icon2-arrow-down").removeClass("hidden");
+            $('.toggleModal').modal();
+        } catch (ex) {
+            console.log(ex);
+        }
+    },
+    HasBasket: function (hasBasket) {
+        if (hasBasket) {
+            $(document).ready(function () {
+                var color = $('.masterBackgroundColor').css('backgroundColor');
+                var iconHolder = $('.client-menu span.icon2-holder--cart');
+                var icon = iconHolder.find('.icon');
+
+                iconHolder.css({
+                    'background-color': color,
+                    'border': '1px solid transparent'
+                });
+                icon.css('color', '#ffffff');
+            });
+        }
+    },
+    LogOut: function () {
+        var relativeurl = "";
+        if (_spPageContextInfo !== null && _spPageContextInfo.webServerRelativeUrl !== undefined) {
+            relativeurl = _spPageContextInfo.webServerRelativeUrl.replace(/\/+$/, '');
+        }
+
+        document.location = relativeurl + '/_layouts/15/armstrong/applicationpages/logout.aspx?Source=' + encodeURIComponent(document.location.href);
+    },
+    Login: function () {
+        var relativeurl = "";
+        if (_spPageContextInfo !== null && _spPageContextInfo.webServerRelativeUrl !== undefined) {
+            relativeurl = _spPageContextInfo.webServerRelativeUrl.replace(/\/+$/, '');
+        }
+
+        document.location = relativeurl + '/_layouts/15/authenticate.aspx?Source=' + encodeURIComponent(document.location.href);
+    },
+    ShowSelfcare: function () {
+        $("[data-selfcare]").removeClass("hidden");
+        $("[data-selfcare]").removeClass("mobile-hidden");
+    },
+    setUserInfo: function (name, id, isAnonymous) {
+        user.id = id;
+        user.name = name;
+        user.isAnonymous = isAnonymous;
+    }
+};
+
+(function ($) {
+    "use strict";
+
+    $.fn.modal = function () {
+
+        return this.each(function () {
+
+            $(this).on('click', function (event) {
+                event.preventDefault();
+                $('.modal_2').toggleClass('is-active');
+                $('.outer-wrap').toggleClass('is-blurred');
+                $('#FooterPlaceHolder').toggleClass('is-blurred');
+            });
+
+        });
+    };
+}(jQuery));
+
+(function ($) {
+    "use strict";
+
+    var show,
+        hide,
+        menu,
+        click_handler;
+
+    show = function ($context) {
+        var $dropdowns = $('.dropdown.open');
+
+        $dropdowns.removeClass('open');
+        $dropdowns.find('.dropdown-menu').addClass('hidden');
+
+        $context.addClass('open');
+        menu($context).removeClass('hidden');
+    };
+
+    hide = function ($context) {
+        $context.removeClass('open');
+        menu($context).addClass('hidden');
+    };
+
+    menu = function ($elem) {
+        return $elem.find('.dropdown-menu');
+    };
+
+    click_handler = function (event) {
+        event.preventDefault();
+
+        var $context,
+            is_open;
+
+        $context = event.data.context;
+
+        // is open if has class 'is_open'
+        is_open = $context.hasClass('open');
+        if (is_open) {
+            hide($context);
+            return;
+        }
+
+        show($context);
+    };
+
+    $.fn.dropdown = function () {
+        this.each(function (idx, elem) {
+            var $elem,
+                $btn;
+
+            $elem = $(elem);
+            if ($elem.data('dropdown') === true) {
+                return;
+            }
+
+            // search for button
+            $btn = $elem.find('.dropdown-trigger');
+
+            // bind click event
+            $btn.on('click', { 'context': $elem }, click_handler);
+
+            // mark element as plugged
+            $elem.data('dropdown', true);
+        });
+
+        return this;
+    };
+}(jQuery));
+
+function profileDropClick(call) {
+    var cls = $(this).attr('class');
+    if (mobletGlobalMenu.hasClass('is-moblet-active')) {
+        showMobletGlobalMenuClick(false);
+    }
+}
+
+function GetUserName(callback) {
+    try {
+        var relativeurl = "";
+        if (_spPageContextInfo !== null && _spPageContextInfo.webServerRelativeUrl !== undefined) {
+            relativeurl = _spPageContextInfo.webServerRelativeUrl.replace(/\/+$/, '');
+        }
+
+        $.ajax({
+            method: "POST",
+            async: true,
+            // OLD - To Remove
+            // url: relativeurl + "/_layouts/15/NOS/loginservice.svc/GetInfoName",
+            url: NOSConstants.GetServicosURL() + "/api/login/GetInfoName",
+            cache: false,
+            xhrFields: { withCredentials: true },
+            contentType: "application/json; charset=utf-8",
+            data: '"' + isEditSite() + '"',
+            dataType: "json",
+            success: function (data) {
+                if (data !== null && data.AnonymousUser !== undefined) {
+                    if (!data.AnonymousUser) {
+
+                        loginInfo.setUserInfo(data.Name, data.Uid, data.AnonymousUser);
+
+                        callback();
+                    }
+                }
+            },
+            error: function () { }
+        });
+
+    } catch (ex) {
+        console.log(ex);
+    }
+}
+
+function LoginUserName() {
+    try {
+        // Create Cookie to save SessionID
+        if (!document.cookie.match(/^(.*;)?\s*servicos.sessionid\s*=\s*[^;]+(.*)?$/)) {
+            var guid = uuidv4();
+            var cookieValue = "servicos.sessionid=" + guid + ";domain=.nos.pt;path=/";
+            document.cookie = cookieValue;
+        }
+
+        var profileDrop = $('.profile-actions.dropdown');
+        var loginElem = $(".profile-actions-menu-trigger p");
+
+        var relativeurl = "";
+        if (_spPageContextInfo !== null && _spPageContextInfo.webServerRelativeUrl !== undefined) {
+            relativeurl = _spPageContextInfo.webServerRelativeUrl.replace(/\/+$/, '');
+        }
+
+        if (loginElem.length > 0) {
+            $.ajax({
+                method: "POST",
+                async: false,
+                // OLD - To remove
+                // url: relativeurl + "/_layouts/15/NOS/loginservice.svc/GetInfoName",
+                url: NOSConstants.GetServicosURL() + "/api/login/GetInfoName",
+                cache: false,
+                xhrFields: { withCredentials: true },
+                contentType: "application/json; charset=utf-8",
+                data: '"' + isEditSite() + '"',
+                dataType: "json",
+                success: function (data) {
+                    if (data !== null && data.AnonymousUser !== undefined) {
+                        if (!data.AnonymousUser) {
+
+                            loginInfo.setUserInfo(data.Name, data.Uid, data.AnonymousUser);
+
+                            if (typeof (bysideWebcare_fid) !== 'undefined') {
+                                bysideWebcare_fid = data.Uid;
+                            }
+
+                            loginInfo.SetDataToPage(loginElem, data.Name);
+                        } else {
+                            $("[name='linkLogin']").removeClass("hidden");
+                        }
+                        loginInfo.HasBasket(data.hasBasket);
+                    } else {
+                        loginInfo.ShowSelfcare();
+                    }
+                },
+                error: function () {
+                    loginInfo.ShowSelfcare();
+                }
+            });
+        } else {
+            loginInfo.ShowSelfcare();
+        }
+    } catch (ex) {
+        console.log(ex);
+        loginInfo.ShowSelfcare();
+    }
+}
+
+function isEditSite() {
+    var inDesignMode = document.forms[MSOWebPartPageFormName].MSOLayout_InDesignMode.value;
+
+    if (inDesignMode === "1") {
+        return 'true';
+    } else {
+        return 'false';
+    }
+}
+
+function uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+$(document).on('click', 'body', function (e) {
+    var target = e.target;
+    if ($(target).parents('.dropdown').length < 1) {
+        if ($('.dropdown.open').length > 0) {
+            var $dropdowns = $('.dropdown.open');
+            $dropdowns.removeClass('open');
+            $dropdowns.find('.dropdown-menu').addClass('hidden');
+        }
+    }
+});
+
+
+$(function () {
+    if (navigator.userAgent.indexOf('Mac OS X') !== -1) {
+        $("body").addClass("mac");
+    } else {
+        $("body").addClass("pc");
+    }
+
+});

@@ -1,0 +1,26 @@
+﻿function NOSConstants() { };
+
+NOSConstants.ServicoUrlVM = "//servicos-nos-vm.nos.pt";
+NOSConstants.ServicoUrlDEV = "//servicos-nos-dev.nos.pt";
+NOSConstants.ServicoUrlIST = "//servicos-nos-ist.nos.pt";
+NOSConstants.ServicoUrlTUI = "//servicos-nos-tui.nos.pt";
+NOSConstants.ServicoUrlPRD = "//servicos-nos.nos.pt";
+
+NOSConstants.GetServicosURL = function () {
+    if (!String.prototype.includes) {
+        String.prototype.includes = function (search, start) {
+            'use strict';
+
+            if (search instanceof RegExp) {
+                throw TypeError('first argument must not be a RegExp');
+            }
+            if (start === undefined) { start = 0; }
+            return this.indexOf(search, start) !== -1;
+        };
+    }
+
+    return window.location.hostname.includes("nos-vm") ? NOSConstants.ServicoUrlVM :
+        window.location.hostname.includes("nos-dev.nos.pt") ? NOSConstants.ServicoUrlDEV :
+            window.location.hostname.includes("nos-ist.nos.pt") ? NOSConstants.ServicoUrlIST :
+                window.location.hostname.includes("nos-tui.nos.pt") ? NOSConstants.ServicoUrlTUI : NOSConstants.ServicoUrlPRD;
+};

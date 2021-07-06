@@ -1,0 +1,123 @@
+##EX1
+
+A<-matrix(1:12, 3, 4)
+B<-matrix(1:12,4,3, T)
+#a)
+
+A+B
+t(A)
+A%*%t(A)
+
+
+#b)
+A[2,3]
+
+#c)
+
+A[,1] = 0
+A
+A[,1] <- 0
+A
+B[B%%2==0] = 0
+B
+B[B%%2==0] <-0
+B
+
+
+
+
+##Ex2
+
+nul6<-matrix(0,6,6)
+
+
+#a)
+m<-nul6
+m[abs(col(nul6)-row(nul6)) == 1] = 1
+m
+
+#b)
+
+M<- m+diag(1:6)
+M
+
+M<-m
+diag(M)<-1:6
+M
+
+
+#C)
+SM<-M[seq(1,nrow(M),by=2), seq(2,ncol(M),by=2)]
+SM
+SM<-M[1:nrow(M)%%2==1, 1:ncol(M)%%2 ==0]
+SM
+
+
+#d)
+
+which(M%%2 ==0, arr.ind = T)
+
+
+
+
+
+
+#3)
+
+#a)
+
+A<-outer(0:4,0:4,"+")
+A
+B<-outer(1:4,0:4,"*")
+B
+
+
+#B)
+
+apply(B,2,mean)
+
+
+colSums(A)
+apply(A,2,sum)
+
+rowSums(B)
+apply(B,1,sum)
+
+
+#c)
+
+C<-outer(seq(0,20,by=5), seq(0,20,by=5),"-")
+
+which(C>10,arr.ind = T)
+
+D<-C
+D[C>10]<-75
+D
+
+
+
+##EX4
+
+mat<-matrix(sample(1:10,60,replace = T), nrow = 6)
+mat
+
+
+#a)
+
+rowSums(mat>4)
+
+apply(mat,1,function(x){sum(x>4)})
+
+
+#b)
+
+apply(mat,2,max)
+
+#C)
+
+which(rowSums(mat==7)==2)
+
+
+#d)
+
+which(outer(colSums(mat),col))

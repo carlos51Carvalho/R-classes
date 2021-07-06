@@ -1,0 +1,227 @@
+###### FICHA 4 ####################
+
+#EX1
+
+
+#A)
+str(iris)
+
+#B)
+attach(iris)
+
+Species[Petal.Length == max(Petal.Length)]
+
+
+#C)
+mean(Petal.Length[Species=="virginica"])
+
+
+#d)
+tapply(Petal.Length, Species, mean)
+
+
+#E)
+
+hist(Petal.Length[Species =="virginica"], plot = F)
+hist(Petal.Length[Species =="virginica"], freq = F)
+
+
+#F)
+
+Sepal.Length.Reord <- Sepal.Length[order(Sepal.Length)]
+Species.reord <- Species[order(Sepal.Length)]
+novo<-data.frame(Sepal.Length.Reord,Species.reord)
+
+novo2<-iris[order(Sepal.Length),c(1,5)]
+names(novo2)<-c("Sepal.Length.novo","Species.novo")
+
+detach(iris)
+
+
+
+
+
+#EX2
+
+traf<-read.table("trafego.txt", header = T)
+
+attach(traf)
+
+#A)
+
+str(traf)
+max(acidentes)
+limite[acidentes==max(acidentes)]
+
+
+#b)
+
+tapply(acidentes,limite, mean)
+
+
+#C)
+
+acs<-acidentes[limite=="n"]
+acc<-acidentes[limite== "s"]
+hist(acs)
+X11()  ## ver cada um dos hist em semparadores separados o primeiiro no plot e o outro x()
+hist(acc)
+
+
+
+
+
+#EX3
+
+#A)
+
+str(airquality)
+attach(airquality)
+max(Temp[Month == 7])
+sum(Temp == max(Temp[Month == 7]) & Month == 7)
+
+##airquality(Temp == max(Temp[Month == 7]) & Month == 7)
+
+
+#B)
+
+tapply(Temp, Month, max)
+
+#C)
+
+split(Temp,Month)
+sapply(split(Temp,Month),max)
+
+
+#d)
+
+is.na(Ozone)
+sum(is.na(Ozone))
+sum(is.na(Solar.R))
+
+
+#e)
+
+which(is.na(Ozone))
+
+
+#f)
+
+novoAr<-data.frame(rowSums(is.na(airquality))==0)
+str(novoAr)
+
+
+#G)
+
+fnew<-function(x){
+  v<-c(max(x),min(x),mean(x))
+  names(v)<-c("maximo","minimo","media")
+  v
+}
+
+attach(novoAr)
+tapply(Ozone,Month,fnew)
+
+
+detach(airquality)
+detach(novoAr)
+
+
+#EX4
+
+CO2Quebec<-read.csv("CO2Quebec.csv")
+attach(CO2Quebec)
+str(CO2Quebec)
+
+#A)
+
+sum(Treatment == "chilled")
+
+mean(uptake[Treatment=="chilled"])
+
+
+
+#B)
+
+tapply(uptake[Treatment =="nonchilled"], conc[Treatment=="nonchilled"], mean)
+
+plot(conc[1:7],tapply(uptake[Treatment =="nonchilled"], conc[Treatment=="nonchilled"], mean),type ="l")
+
+plot(levels(as.factor(conc)),tapply(uptake[Treatment =="nonchilled"], conc[Treatment=="nonchilled"], mean),type = "l")
+
+
+z<-tapply(uptake[Treatment =="chilled"], conc[Treatment=="chilled"], mean)
+points(conc[1:7], z, type="l",col ="red")
+legend(400,30,legend=c("ch","nonch"),col = c("red", "black"), lty = 1)
+
+detach(CO2Quebec)
+
+
+
+
+#EX5
+x<-c(1,2,3)
+
+dado<-function(n){
+  x<-sample(1:6,n, replace = T)
+  x
+  medx<-mean(dado(n))
+  tabx<- table(x)
+  estatx<-sum((tabx-n/6)^2/(n/6))
+  lis<-list(lanc=x,media = medx,tabela = tabx,estat = estatx)
+}
+
+medx<-mean(dado(10))
+medx
+
+dado(3)
+
+
+
+
+#EX6
+result<-dado(100)
+result$estat
+
+while(result$estat >=2){
+  result<-dado(100)
+  print(result)
+}
+
+
+#EX7
+
+replicate(400,mean(sample(1:6,10,replace = T)))
+replicate(400, dado(10)$media)
+
+f7<-function(i){
+  mean(sample(1:6,10,replace = T))
+}
+
+sapply(1:400, f7)
+
+
+
+
+#EX8
+
+z<-sample(0:1,1)
+while(z[length(z)==0]){
+  z<-c(z,sample(0:1,1))
+}
+
+v<-replicate(400,{
+  z<-sample(0:1,1)
+  length(z)-1
+})
+
+
+g<-function(i){
+  z<-sample(0:1,1)
+  while (z[length(z)==0]) {
+    z<-c(z,sample(0:1,1))}
+  length(z)-1
+}
+
+v<-sapply(1:4000,g)
+plot(table(v))
